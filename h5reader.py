@@ -29,6 +29,9 @@ def groupItem(itemName):
       app = group.__getitem__(itemName)
       #lista allt som app innehåller
       print(list(app))
+
+      valueList = list(app)
+      return valueList
     
 
 groupStructure()
@@ -38,3 +41,4 @@ groupStructure()
 
 
 #print(list(f["0 VCM1"]))
+
