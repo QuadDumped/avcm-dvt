@@ -4,7 +4,8 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-def embeddedPlot(X, Y):
+def embeddedPlot(X = [1, 2, 3, 4], Y = [1, 2, 3, 6]):
+
     fig = Figure(figsize = (5, 5), dpi = 100) 
     plot1 = fig.add_subplot(111) 
     plot1.plot(X, Y)
@@ -13,8 +14,6 @@ def embeddedPlot(X, Y):
     canvas.draw() 
     canvas.get_tk_widget().pack()
 
-x = [1, 2, 3, 4]
-y = [1, 2, 3, 6]
 
 window = Tk()
 window.geometry("600x300")
@@ -26,11 +25,11 @@ mb["menu"] =  mb.menu
 
 mayoVar = IntVar()
 ketchVar = IntVar()
-mb.menu.add_checkbutton ( label="Signal 1", variable=mayoVar)
-mb.menu.add_checkbutton ( label="Signal 2", variable=ketchVar)
-mb.pack(side = TOP, anchor=NW)
+button1 = mb.menu.add_checkbutton ( label="Signal 1", variable=mayoVar, command= lambda: embeddedPlot([1, 2, 3, 4], [1, 3, 5, 1]))
+button2 = mb.menu.add_checkbutton ( label="Signal 2", variable=ketchVar, command= lambda: embeddedPlot())
 
-embeddedPlot(x, y)
+mb.pack(side = TOP, anchor=NW)
+ 
 
 window.mainloop()
 
