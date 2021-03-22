@@ -1,7 +1,5 @@
-#Start
-
 import h5py
-log = h5py.File("D:\Python\log_210129_124838_1611920928.h5")
-print(log.keys())
+import h5reader
 
-#End
+selectedgroup = h5reader.retrieveGroups()[0]
+print(h5reader.newGroupStructure(selectedgroup))
