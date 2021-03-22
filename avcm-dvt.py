@@ -1,5 +1,7 @@
 import h5py
 import h5reader
 
-selectedgroup = h5reader.retrieveGroups()[0]
-print(h5reader.groupStructure(selectedgroup))
+#selectedGroup = h5reader.retrieveGroups()[0]
+#selectedItem = h5reader.groupStructure(selectedGroup)[0]
+#datasetValues = h5reader.readData(selectedGroup, selectedItem)
+#print(datasetValues)

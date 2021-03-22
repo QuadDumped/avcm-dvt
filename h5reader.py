@@ -26,7 +26,12 @@ def retrieveGroups():
 
 def groupStructure(group):
   with h5py.File(path) as log:
-    data = list(log[group])
-    return data
+    dataset = list(log[group])
+    return dataset
 
+def readData(group, dataset):
+  with h5py.File(path) as log:
+    groupobject = log[group]
+    datasetItem = groupobject.__getitem__(dataset)
+    return list(datasetItem)
 
