@@ -17,28 +17,3 @@ def plot(itemdata):
     return canvas
 
 
-app = QApplication([])
-app.setStyle("Fusion")
-
-window = QWidget()
-layout = QVBoxLayout()
-
-combo = QComboBox()
-groupItems = groupStructure('0 VCM1')
-for item in groupItems:
-    combo.addItem(item)
-
-#hämta data från valt item och skicka in det i plot
-currentItem = combo.currentText
-itemData = "null" #groupItem(currentItem)
-canvas = plot(itemData)
-
-#kopplar selectedItem till knapparna och skriver ut item i terminalen
-combo.activated[str].connect(selectedItem) 
-
-layout.addWidget(combo)
-layout.addWidget(canvas)
-window.setLayout(layout)
-window.show()
-app.exec()
-
