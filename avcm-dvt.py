@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QCo
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from gui.graphGUI import plot, selectedItem
-from h5reader import groupStructure, retrieveGroups
+from h5reader import groupStructure, retrieveGroups, groupItem, readData
 
 #selectedGroup = h5reader.retrieveGroups()[0]
 #selectedItem = h5reader.groupStructure(selectedGroup)[0]
@@ -13,12 +13,15 @@ from h5reader import groupStructure, retrieveGroups
 #selectedgroup = h5reader.retrieveGroups()[0]
 #print(h5reader.groupStructure(selectedgroup))
 
+
+
 app = QApplication([])
 app.setStyle("Fusion")
 
 window = QWidget()
+window.setFixedWidth(600)
+window.setFixedHeight(350)
 layout = QVBoxLayout()
-
 combo = QComboBox()
 
 firstGroup = retrieveGroups()[0]
@@ -27,16 +30,30 @@ for item in groupItems:
     combo.addItem(item)
 
 
-#hämta data från valt item och skicka in det i plot
-currentItem = combo.currentText
-itemData = "null" #groupItem(currentItem)
-canvas = plot(itemData)
 
-#kopplar selectedItem till knapparna och skriver ut item i terminalen
-combo.activated[str].connect(selectedItem) 
+#anropar variablerna utanför funktionen som global för att de inte ska skrivas över i funktionen
+#
+previousGraph = "None"
+hasChosen = False
+def addCanvas():
+   global previousGraph
+   global hasChosen
 
+   if hasChosen:
+        layout.removeWidget(previousGraph)
+
+   currentItem = str(combo.currentText())
+   itemData = (readData("0 VCM1", currentItem))
+   graph = plot(itemData)
+   layout.addWidget(graph)
+   previousGraph = graph
+   hasChosen = True
+
+
+
+combo.currentIndexChanged.connect(addCanvas)
 layout.addWidget(combo)
-layout.addWidget(canvas)
+
 window.setLayout(layout)
 window.show()
 app.exec()

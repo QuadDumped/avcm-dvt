@@ -10,9 +10,18 @@ def selectedItem(item):
 
 def plot(itemdata):
 
+    x = []
+    y = []
+    i = 0
+
+    for row in itemdata:
+        i+=1
+        x.append(i)
+        y.append(row[1])
+
     fig = Figure(figsize=(4, 5), dpi=100)
     axes = fig.add_subplot(111)
-    axes.plot([0,1,2,3,4], [10,1,20,3,40])
+    axes.plot(x, y)
     canvas = FigureCanvasQTAgg(fig) 
     return canvas
 
