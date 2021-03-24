@@ -1,7 +1,5 @@
 import h5py
 
-path = "log_210129_124838_1611920928.h5"
-
 def groupItem(itemName):
     with h5py.File(path, "r") as log:
 
@@ -19,17 +17,17 @@ def groupItem(itemName):
       valueList = list(app)
       return valueList
     
-def retrieveGroups():
+def retrieveGroups(path):
   with h5py.File(path) as log:
     groups = list(log.keys())
     return groups
 
-def groupStructure(group):
+def groupStructure(path, group):
   with h5py.File(path) as log:
     dataset = list(log[group])
     return dataset
 
-def readData(group, dataset):
+def readData(path, group, dataset):
   with h5py.File(path) as log:
     groupobject = log[group]
     datasetItem = groupobject.__getitem__(dataset)
