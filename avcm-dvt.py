@@ -47,7 +47,7 @@ def addCanvas():
         layout.removeWidget(previousGraph)
 
    currentItem = str(combo.currentText())
-   itemData = (readData("0 VCM1", currentItem))
+   itemData = (readData(firstGroup, currentItem))
    graph = plot(itemData)
    layout.addWidget(graph)
    previousGraph = graph
