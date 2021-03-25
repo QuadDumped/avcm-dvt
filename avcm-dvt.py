@@ -1,5 +1,7 @@
 import h5py
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QComboBox, QFileDialog
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QComboBox, QFileDialog, QLayout, QHBoxLayout, QMessageBox, QButtonGroup
+from PyQt5.QtCore import * 
+from PyQt5.QtGui import *
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from tkinter import filedialog
@@ -14,16 +16,23 @@ from h5reader import groupStructure, retrieveGroups, groupItem, readData
 #selectedgroup = h5reader.retrieveGroups()[0]
 #print(h5reader.groupStructure(selectedgroup))
 
-
 app = QApplication([])
 app.setStyle("Fusion")
 
 window = QWidget()
+window.setWindowTitle("Autonomous Vehicle Controle Module Data Visualization Tool")
 window.setFixedWidth(600)
 window.setFixedHeight(350)
+
+#window är strukturerat horisontellt så att layout(knapparna) och canvaslayout(grafen) placeras bredvid varandra
+window.setLayout(QHBoxLayout())
+canvasLayout = QVBoxLayout()
 layout = QVBoxLayout()
+
 button = QPushButton('Open File')
 combo = QComboBox()
+button.setFixedWidth(70)
+combo.setFixedWidth(70)
 
 path = "log_210129_124838_1611920928.h5"
 
@@ -32,20 +41,23 @@ groupItems = groupStructure(path, firstGroup)
 for item in groupItems:
     combo.addItem(item)
 
- 
 #anropar variablerna utanför funktionen som global för att de inte ska ignoreras i funktionen
+#föregående grafen tas bort och ersätts om det inte är första gången man väljer ett item
 previousGraph = "None"
 hasChosen = False
 def addCanvas():
    global previousGraph
    global hasChosen
+   global groupItems
    if hasChosen:
-        layout.removeWidget(previousGraph)
+        canvasLayout.removeWidget(previousGraph)
 
    currentItem = str(combo.currentText())
    itemData = (readData(path, firstGroup, currentItem))
+
    graph = plot(itemData)
-   layout.addWidget(graph)
+   canvasLayout.addWidget(graph, alignment=Qt.AlignRight | Qt.AlignCenter)
+
    previousGraph = graph
    hasChosen = True
 
@@ -57,18 +69,26 @@ def chooseFile():
 
     #efter att ny fil har valts måste combobox rensas och uppdateras, annars blir gamla items kvar
     combo.clear()
-    firstGroup = retrieveGroups(path)[0]
-    groupItems = groupStructure(path, firstGroup)
-    for item in groupItems:
-      combo.addItem(item)
+    try:
+        firstGroup = retrieveGroups(path)[0]
+        groupItems = groupStructure(path, firstGroup)
+        for item in groupItems:
+          combo.addItem(item)
+
+    except:
+        msg = QMessageBox()
+        msg.setWindowTitle("Warning")
+        msg.setText("You need to choose a file")
+        msg.exec_()
 
 
 button.clicked.connect(chooseFile)
 combo.activated.connect(addCanvas)
-layout.addWidget(button)
-layout.addWidget(combo)
 
-window.setLayout(layout)
+layout.addWidget(button, alignment=Qt.AlignLeft)
+layout.addWidget(combo, alignment=Qt.AlignLeft | Qt.AlignTop)
+window.layout().addLayout(layout)
+window.layout().addLayout(canvasLayout)
 window.show()
 app.exec()
 

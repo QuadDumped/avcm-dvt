@@ -19,7 +19,7 @@ def plot(itemdata):
         x.append(i)
         y.append(row[1])
 
-    fig = Figure(figsize=(4, 5), dpi=100)
+    fig = Figure(figsize=(5, 5), dpi=100)
     axes = fig.add_subplot(111)
     axes.plot(x, y)
     canvas = FigureCanvasQTAgg(fig) 
