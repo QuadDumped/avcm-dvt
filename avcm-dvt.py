@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QCo
 from PyQt5.QtCore import * 
 from PyQt5.QtGui import *
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 from tkinter import filedialog
 from gui.graphGUI import createCanvas, selectedItem
@@ -31,8 +32,11 @@ layout = QVBoxLayout()
 
 button = QPushButton('Open File')
 combo = QComboBox()
+button2 = QPushButton("Clear")
+
 button.setFixedWidth(70)
 combo.setFixedWidth(70)
+button2.setFixedWidth(70)
 
 path = "log_210129_124838_1611920928.h5"
 
@@ -41,25 +45,50 @@ groupItems = groupStructure(path, firstGroup)
 for item in groupItems:
     combo.addItem(item)
 
+  
+fig = Figure(figsize=(12, 12), dpi=100)
+axes = fig.add_subplot(111)
+
 
 #anropar variablerna utanför funktionen som global för att de inte ska ignoreras i funktionen
 #föregående grafen tas bort och ersätts om det inte är första gången man väljer ett item
 previousGraph = "None"
 hasChosen = False
 
+
+def clearPlot():
+    axes.clear()
+    #tar bort alla widgets i canvaslayout
+    for i in reversed(range(canvasLayout.count())): 
+     canvasLayout.itemAt(i).widget().setParent(None)
+
 def addCanvas():
    global previousGraph
    global hasChosen
-   global groupItems
-   
+
    if hasChosen:
-        canvasLayout.removeWidget(previousGraph)
-  
+     for i in reversed(range(canvasLayout.count())): 
+         canvasLayout.itemAt(i).widget().setParent(None)
+
    currentItem = str(combo.currentText())
    itemData = (readData(path, firstGroup, currentItem))
-   graph = createCanvas(itemData)
 
+   x = []
+   y = []
+   i = 0
+
+   for row in itemData:
+       i+=1
+       x.append(i)
+       y.append(row[1])
+
+   graph = createCanvas(fig)
+   toolbar = NavigationToolbar(graph, window)
+   canvasLayout.addWidget(toolbar)
    canvasLayout.addWidget(graph, alignment=Qt.AlignRight | Qt.AlignCenter)
+ 
+   axes.plot(x, y)
+   
    previousGraph = graph
    hasChosen = True
 
@@ -86,9 +115,11 @@ def chooseFile():
 
 button.clicked.connect(chooseFile)
 combo.activated.connect(addCanvas)
+button2.clicked.connect(clearPlot)
 
 layout.addWidget(button, alignment=Qt.AlignLeft)
 layout.addWidget(combo, alignment=Qt.AlignLeft | Qt.AlignTop)
+layout.addWidget(button2, alignment=Qt.AlignLeft)
 window.layout().addLayout(layout)
 window.layout().addLayout(canvasLayout)
 
