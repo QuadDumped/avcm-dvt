@@ -1,11 +1,11 @@
 import h5py
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QComboBox, QFileDialog, QLayout, QHBoxLayout, QMessageBox, QButtonGroup
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QComboBox, QFileDialog, QLayout, QHBoxLayout, QMessageBox, QButtonGroup, QCheckBox
 from PyQt5.QtCore import * 
 from PyQt5.QtGui import *
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from tkinter import filedialog
-from gui.graphGUI import plot, selectedItem
+from gui.graphGUI import createCanvas, selectedItem
 from h5reader import groupStructure, retrieveGroups, groupItem, readData
 
 #selectedGroup = h5reader.retrieveGroups()[0]
@@ -24,7 +24,7 @@ window.setWindowTitle("Autonomous Vehicle Controle Module Data Visualization Too
 window.setFixedWidth(600)
 window.setFixedHeight(350)
 
-#window är strukturerat horisontellt så att layout(knapparna) och canvaslayout(grafen) placeras bredvid varandra
+#window är strukturerat horisontellt så att layout(knapparna) och canvaslayout() placeras bredvid varandra
 window.setLayout(QHBoxLayout())
 canvasLayout = QVBoxLayout()
 layout = QVBoxLayout()
@@ -41,23 +41,25 @@ groupItems = groupStructure(path, firstGroup)
 for item in groupItems:
     combo.addItem(item)
 
+
 #anropar variablerna utanför funktionen som global för att de inte ska ignoreras i funktionen
 #föregående grafen tas bort och ersätts om det inte är första gången man väljer ett item
 previousGraph = "None"
 hasChosen = False
+
 def addCanvas():
    global previousGraph
    global hasChosen
    global groupItems
+   
    if hasChosen:
         canvasLayout.removeWidget(previousGraph)
-
+  
    currentItem = str(combo.currentText())
    itemData = (readData(path, firstGroup, currentItem))
+   graph = createCanvas(itemData)
 
-   graph = plot(itemData)
    canvasLayout.addWidget(graph, alignment=Qt.AlignRight | Qt.AlignCenter)
-
    previousGraph = graph
    hasChosen = True
 
@@ -89,6 +91,7 @@ layout.addWidget(button, alignment=Qt.AlignLeft)
 layout.addWidget(combo, alignment=Qt.AlignLeft | Qt.AlignTop)
 window.layout().addLayout(layout)
 window.layout().addLayout(canvasLayout)
+
 window.show()
 app.exec()
 

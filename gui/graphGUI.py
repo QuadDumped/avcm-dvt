@@ -8,7 +8,7 @@ path = "log_210129_124838_1611920928.h5"
 def selectedItem(item):
     print(item)
 
-def plot(itemdata):
+def createCanvas(itemdata):
 
     x = []
     y = []
@@ -22,6 +22,8 @@ def plot(itemdata):
     fig = Figure(figsize=(5, 5), dpi=100)
     axes = fig.add_subplot(111)
     axes.plot(x, y)
+
+    #axes.plot([1, 2000, 3000, 5000], [120000, 111000, 100000, 90000], "b")
     canvas = FigureCanvasQTAgg(fig) 
     return canvas
 
