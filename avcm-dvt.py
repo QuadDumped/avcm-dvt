@@ -21,8 +21,8 @@ app.setStyle("Fusion")
 
 window = QWidget()
 window.setWindowTitle("Autonomous Vehicle Controle Module Data Visualization Tool")
-window.setFixedWidth(600)
-window.setFixedHeight(350)
+window.setFixedWidth(1280)
+window.setFixedHeight(800)
 
 #window är strukturerat horisontellt så att layout(knapparna) och canvaslayout() placeras bredvid varandra
 window.setLayout(QHBoxLayout())
