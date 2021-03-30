@@ -31,15 +31,10 @@ layout = QVBoxLayout()
 
 button = QPushButton('Open File')
 combo = QComboBox()
-button.setFixedWidth(70)
-combo.setFixedWidth(70)
-
-path = "log_210129_124838_1611920928.h5"
-
-firstGroup = retrieveGroups(path)[0]
-groupItems = groupStructure(path, firstGroup)
-for item in groupItems:
-    combo.addItem(item)
+button.setFixedWidth(120)
+combo.setFixedWidth(120)
+groupCombo = QComboBox()
+groupCombo.setFixedWidth(120)
 
 #anropar variablerna utanför funktionen som global för att de inte ska ignoreras i funktionen
 #föregående grafen tas bort och ersätts om det inte är första gången man väljer ett item
@@ -53,7 +48,8 @@ def addCanvas():
         canvasLayout.removeWidget(previousGraph)
 
    currentItem = str(combo.currentText())
-   itemData = (readData(path, firstGroup, currentItem))
+   currentGroup = str(groupCombo.currentText())
+   itemData = (readData(path, currentGroup, currentItem))
 
    graph = plot(itemData)
    canvasLayout.addWidget(graph, alignment=Qt.AlignRight | Qt.AlignCenter)
@@ -68,12 +64,12 @@ def chooseFile():
     path = QFileDialog.getOpenFileName(None, "Open a h5 log file", "", "h5 files (*.h5*)")[0]
 
     #efter att ny fil har valts måste combobox rensas och uppdateras, annars blir gamla items kvar
+    groupCombo.clear()
     combo.clear()
     try:
-        firstGroup = retrieveGroups(path)[0]
-        groupItems = groupStructure(path, firstGroup)
-        for item in groupItems:
-          combo.addItem(item)
+        allGroups = retrieveGroups(path)
+        for group in allGroups:
+            groupCombo.addItem(group)
 
     except:
         msg = QMessageBox()
@@ -81,12 +77,22 @@ def chooseFile():
         msg.setText("You need to choose a file")
         msg.exec_()
 
+def chooseItem():
+    global path
+    combo.clear()
+    chosenGroup = groupCombo.currentIndex()
+    group = retrieveGroups(path)[chosenGroup]
+    datasets = groupStructure(path, group)
+    for dataset in datasets:
+        combo.addItem(dataset)
 
 button.clicked.connect(chooseFile)
 combo.activated.connect(addCanvas)
+groupCombo.activated.connect(chooseItem)
 
 layout.addWidget(button, alignment=Qt.AlignLeft)
 layout.addWidget(combo, alignment=Qt.AlignLeft | Qt.AlignTop)
+layout.addWidget(groupCombo, alignment=Qt.AlignLeft | Qt.AlignTop)
 window.layout().addLayout(layout)
 window.layout().addLayout(canvasLayout)
 window.show()
