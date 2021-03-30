@@ -29,24 +29,18 @@ window.setFixedHeight(800)
 window.setLayout(QHBoxLayout())
 canvasLayout = QVBoxLayout()
 buttonLayout = QVBoxLayout()
-buttonLayout.setContentsMargins(0,0,0,700)
+buttonLayout.setContentsMargins(0,0,0,670)
 button = QPushButton('Open File')
 combo = QComboBox()
+groupCombo = QComboBox()
 button2 = QPushButton("Clear")
 button3 =  QPushButton("Clear 2")
 
-button.setFixedWidth(70)
-combo.setFixedWidth(70)
-button2.setFixedWidth(70)
-
-path = "log_210129_124838_1611920928.h5"
-
-firstGroup = retrieveGroups(path)[0]
-groupItems = groupStructure(path, firstGroup)
-for item in groupItems:
-    combo.addItem(item)
-
-
+button.setFixedWidth(120)
+combo.setFixedWidth(120)
+groupCombo.setFixedWidth(120)
+button2.setFixedWidth(120)
+  
 fig = Figure(figsize=(12, 12), dpi=100)
 axes = fig.add_subplot(111)
 
@@ -70,7 +64,8 @@ def addCanvas():
          canvasLayout.itemAt(i).widget().setParent(None)
 
    currentItem = str(combo.currentText())
-   itemData = (readData(path, firstGroup, currentItem))
+   currentGroup = str(groupCombo.currentText())
+   itemData = (readData(path, currentGroup, currentItem))
 
    x = []
    y = []
@@ -99,13 +94,12 @@ def chooseFile():
     path = QFileDialog.getOpenFileName(None, "Open a h5 log file", "", "h5 files (*.h5*)")[0]
 
     #efter att ny fil har valts måste combobox rensas och uppdateras, annars blir gamla items kvar
+    groupCombo.clear()
     combo.clear()
     try:
-        firstGroup = retrieveGroups(path)[0]
-   
-        groupItems = groupStructure(path, firstGroup)
-        for item in groupItems:
-          combo.addItem(item)
+        allGroups = retrieveGroups(path)
+        for group in allGroups:
+            groupCombo.addItem(group)
 
     except:
         msg = QMessageBox()
@@ -113,13 +107,22 @@ def chooseFile():
         msg.setText("You need to choose a file")
         msg.exec_()
 
+def chooseItem():
+    global path
+    combo.clear()
+    chosenGroup = groupCombo.currentIndex()
+    group = retrieveGroups(path)[chosenGroup]
+    datasets = groupStructure(path, group)
+    for dataset in datasets:
+        combo.addItem(dataset)
 
 button.clicked.connect(chooseFile)
 combo.activated.connect(addCanvas)
+groupCombo.activated.connect(chooseItem)
 button2.clicked.connect(clearPlot)
 
-
 buttonLayout.addWidget(button, alignment=Qt.AlignLeft | Qt.AlignTop)
+buttonLayout.addWidget(groupCombo, alignment=Qt.AlignLeft | Qt.AlignTop)
 buttonLayout.addWidget(combo, alignment=Qt.AlignLeft | Qt.AlignTop)
 buttonLayout.addWidget(button2, alignment=Qt.AlignLeft | Qt.AlignTop)
 
