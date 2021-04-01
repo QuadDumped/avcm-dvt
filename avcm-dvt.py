@@ -9,13 +9,6 @@ from tkinter import filedialog
 from gui.graphGUI import createCanvas, selectedItem
 from h5reader import groupStructure, retrieveGroups, groupItem, readData
 
-#selectedGroup = h5reader.retrieveGroups()[0]
-#selectedItem = h5reader.groupStructure(selectedGroup)[0]
-#datasetValues = h5reader.readData(selectedGroup, selectedItem)
-#print(datasetValues)
-
-#selectedgroup = h5reader.retrieveGroups()[0]
-#print(h5reader.groupStructure(selectedgroup))
 
 app = QApplication([])
 app.setStyle("Fusion")
@@ -70,7 +63,6 @@ def addCanvas():
    global hasChosen
    global axes
 
-   print(compare)
    if compare == False:
         if hasChosen:
          for i in reversed(range(canvasLayout.count())): 
