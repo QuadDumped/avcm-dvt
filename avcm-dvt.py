@@ -32,9 +32,10 @@ buttonLayout = QVBoxLayout()
 buttonLayout.setContentsMargins(0,0,0,670)
 button = QPushButton('Open File')
 combo = QComboBox()
+compareCheck = QCheckBox("Compare")
 groupCombo = QComboBox()
 button2 = QPushButton("Clear")
-button3 =  QPushButton("Clear 2")
+
 
 button.setFixedWidth(120)
 combo.setFixedWidth(120)
@@ -44,25 +45,37 @@ button2.setFixedWidth(120)
 fig = Figure(figsize=(12, 12), dpi=100)
 axes = fig.add_subplot(111)
 
+
 #anropar variablerna utanför funktionen som global för att de inte ska ignoreras i funktionen
 #föregående grafen tas bort och ersätts om det inte är första gången man väljer ett item
 previousGraph = "None"
 hasChosen = False
+compare = False
+
+def compareClicked(): 
+   global compare 
+   compare = compareCheck.isChecked()
+  
 
 def clearPlot():
+    global axes
     axes.clear()
     #tar bort alla widgets i canvaslayout
     for i in reversed(range(canvasLayout.count())): 
      canvasLayout.itemAt(i).widget().setParent(None)
 
+
 def addCanvas():
    global previousGraph
    global hasChosen
+   global axes
 
-   if hasChosen:
-     for i in reversed(range(canvasLayout.count())): 
-         canvasLayout.itemAt(i).widget().setParent(None)
-
+   print(compare)
+   if compare == False:
+        if hasChosen:
+         for i in reversed(range(canvasLayout.count())): 
+              canvasLayout.itemAt(i).widget().setParent(None) 
+  
    currentItem = str(combo.currentText())
    currentGroup = str(groupCombo.currentText())
    itemData = (readData(path, currentGroup, currentItem))
@@ -76,14 +89,27 @@ def addCanvas():
        x.append(i)
        y.append(row[1])
 
-   graph = createCanvas(fig)
-   toolbar = NavigationToolbar(graph, window)
-   
-   canvasLayout.addWidget(toolbar)
-   canvasLayout.addWidget(graph, alignment=Qt.AlignRight | Qt.AlignCenter)
 
- 
-   axes.plot(x, y)
+   graph = createCanvas(fig)
+   windowHeight = window.height() 
+   #graferna placeras jämnt inom fönstret
+   fig.set_figheight(windowHeight)
+
+   if compare == False:
+        toolbar = NavigationToolbar(graph, window)
+        canvasLayout.addWidget(toolbar)
+        axes.plot(x, y)
+        canvasLayout.addWidget(graph, alignment=Qt.AlignRight | Qt.AlignCenter)
+
+   else:
+        #definierar en ny figure så att man inte plottar till den gamla
+        fig2 = Figure(figsize=(12, windowHeight), dpi=100)
+        axes2 = fig2.add_subplot(111)
+        graph2 = createCanvas(fig2)     
+        axes2.plot(x, y)
+        canvasLayout.addWidget(graph2, alignment=Qt.AlignRight | Qt.AlignCenter)
+      
+
    previousGraph = graph
    hasChosen = True
 
@@ -120,10 +146,11 @@ button.clicked.connect(chooseFile)
 combo.activated.connect(addCanvas)
 groupCombo.activated.connect(chooseItem)
 button2.clicked.connect(clearPlot)
-
+compareCheck.clicked.connect(compareClicked)
 buttonLayout.addWidget(button, alignment=Qt.AlignLeft | Qt.AlignTop)
 buttonLayout.addWidget(groupCombo, alignment=Qt.AlignLeft | Qt.AlignTop)
 buttonLayout.addWidget(combo, alignment=Qt.AlignLeft | Qt.AlignTop)
+buttonLayout.addWidget(compareCheck, alignment=Qt.AlignLeft | Qt.AlignTop)
 buttonLayout.addWidget(button2, alignment=Qt.AlignLeft | Qt.AlignTop)
 
 window.layout().addLayout(buttonLayout)
