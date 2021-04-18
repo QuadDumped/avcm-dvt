@@ -3,6 +3,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 
 
+
 class CloseButton(QWidget):
     def __init__(self, widget, isCompareGraph = True, axes = None, axesTitle = None):
         super(CloseButton, self).__init__()
@@ -30,11 +31,18 @@ class CloseButton(QWidget):
 class GridWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.setFixedHeight(1080)
-        self.setFixedWidth(1920)
+        self.setFixedHeight(900)
+        self.setFixedWidth(1800)
 
     def pushLayout(self, layout):
-        self.setLayout(layout)
+        if self.layout() is None:
+           self.setLayout(layout)
+        
+        
+
+    
+
+
 
 
 

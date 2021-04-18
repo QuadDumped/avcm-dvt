@@ -1,12 +1,11 @@
 import h5py
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QComboBox, QFileDialog, QLayout, QHBoxLayout, QMessageBox, QButtonGroup, QCheckBox, QLabel, QGridLayout
+from PyQt5.QtWidgets import *
 from PyQt5.QtCore import * 
 from PyQt5.QtGui import *
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
-from tkinter import filedialog
 from gui.graphGUI import createCanvas, selectedItem
 from customwidgets import CloseButton, GridWindow
 from h5reader import groupStructure, retrieveGroups, groupItem, readData
@@ -61,7 +60,6 @@ def popOut():
         currentGroup = str(groupCombo.currentText())
         itemData = (readData(path, currentGroup, currentItem))
 
-    
     except:
         msg = QMessageBox()
         msg.setWindowTitle("Warning")
@@ -69,7 +67,6 @@ def popOut():
         msg.exec_()
         return()
 
-  
     x = []
     y = []
     i = 0
@@ -82,6 +79,7 @@ def popOut():
     plt.figure()
     plt.plot(x, y) 
     plt.title(currentGroup + "/" + currentItem)
+
     plt.show()
 
 def compareClicked(): 
@@ -148,7 +146,7 @@ def chooseItem():
         axes2.set_title(currentItem)
 
         closeButton = CloseButton(graph2)
-
+            
         canvasLayout.addWidget(closeButton, alignment=Qt.AlignRight | Qt.AlignCenter)
         canvasLayout.addWidget(graph2, alignment=Qt.AlignRight | Qt.AlignCenter)
 
@@ -200,7 +198,7 @@ def createGrid():
 
 
     gridlayout = QGridLayout()
-    gridlayout.setColumnStretch(3, 5)
+    gridlayout.setColumnStretch(4, 6)
 
     for dataset in dataSets:
 
@@ -221,11 +219,12 @@ def createGrid():
         graph = createCanvas(fig)
         axes.plot(x, y)
         axes.set_title(dataset)
-
+        graph.setMaximumHeight(450)
+        graph.setMaximumWidth(700)
         gridlayout.addWidget(graph)
 
-
     grid.pushLayout(gridlayout)
+    grid.setStyleSheet("background-color:white;")
     grid.show()
 
 
